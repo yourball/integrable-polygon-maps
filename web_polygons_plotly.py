@@ -62,7 +62,7 @@ def orbit(
     return traj_data
 
 def plot_orbits(k_list, xi_list, d, Tmax=1000, map_type="Simple", L=1):
-    x0_list = np.linspace(0, 5, 10)
+    x0_list = np.linspace(0, 5, 20)
     max_x0 = max(x0_list)
 
     for i, x0 in enumerate(x0_list):
