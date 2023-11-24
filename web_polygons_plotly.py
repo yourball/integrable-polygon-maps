@@ -135,7 +135,7 @@ with st.sidebar:
     Tmax = st.number_input("Number of map iterations", value=1000, min_value=1, step=100)
 
     st.divider()
-    md = st.markdown(''':gray[@ Created by Yaroslav Kharkov, Tymofey Zolkin, Sergey Nagaitsev (2023)]''')
+    md = st.markdown(''':gray[@ Created by Yaroslav Kharkov, Timofey Zolkin, Sergey Nagaitsev (2023)]''')
 
 tab1, tab2, tab3 = st.tabs(["Map visualization", "Definitions", "Figures"])
 
