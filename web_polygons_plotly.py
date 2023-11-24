@@ -147,7 +147,7 @@ with tab1:
             f.append(force_periodic(xi, k_list, xi_list, d))
 
     df = pd.DataFrame({'x': x, 'f': f})
-    fig_f = px.scatter(df, x='x', y='f')
+    fig_f = px.scatter(df, x='p', y='f(p)')
     fig_f.update_layout(
         width=600,
         height=600,
