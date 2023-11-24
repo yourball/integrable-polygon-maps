@@ -6,6 +6,7 @@ import plotly.express as px
 import altair as alt
 import time
 import matplotlib.pyplot as plt
+from PIL import Image
 
 def force(x, k_list, xi_list, d):
     # assert len(k_list) == len(xi_list) + 1
@@ -128,7 +129,7 @@ with st.sidebar:
     st.divider()
     md = st.markdown(''':gray[@ Created by Yaroslav Kharkov, Tymofey Zolkin, Sergey Nagaitsev (2023)]''')
 
-tab1, tab2 = st.tabs(["Map visualization", "Definitions"])
+tab1, tab2, tab3 = st.tabs(["Map visualization", "Definitions", "Figures"])
 
 with tab1:
     st.subheader('Mapping')
@@ -169,8 +170,19 @@ with tab1:
     st.plotly_chart(fig_f)
     plt.legend()
 with tab2:
-    st.text("Symplectic (Hamiltonian) map in McMillan-Turaev form:")
+    st.markdown("Symplectic (Hamiltonian) map in McMillan-Turaev form:")
     st.latex(r'''
         q'= p,\quad
         p'=-q+f(p)
         ''')
+
+    st.markdown("Force function with 'arithmetical quasiperiodicity' condition with a period L is defined as:")
+    st.latex(r''' f_\mathrm{a.q.}(q+L) = f_\mathrm{a.q.}(q) + F, \quad \text{where} \quad F = f_\mathrm{a.q.}(L) - f_\mathrm{a.q.}(0) = const. ''')
+
+    st.markdown("Force function on a thorus is defined as:")
+    st.latex(r''' f_\mathrm{tor}(q) =
+f_\mathrm{p.l.}(q\,\,\mathrm{mod}\,\, L)\quad\mathrm{mod}\,\, L. ''')
+with tab3:
+
+    image1 = Image.open('Map1516.png')
+    st.image(image1, caption='Phase portrait for the map MG6')
