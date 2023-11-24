@@ -29,6 +29,9 @@ def force(x, k_list, xi_list, d):
     f = ki * (x - ai) + bi + d
     return f
 
+def force_thorus(x, k_list, xi_list, d, L=1):
+    return force(x % L, k_list, xi_list, d) % L
+
 def periodic_step(x, width=1):
     return x // width
 
@@ -38,7 +41,7 @@ def force_periodic(x, k_list, xi_list, d):
     return delta_f*periodic_step(x, width=l) + force(x % l, k_list, xi_list, d)
 
 def orbit(
-    x0, y0, k_list, xi_list, d, Tmax, map_type="Simple"
+    x0, y0, k_list, xi_list, d, Tmax, map_type="Simple", L=1
 ):
     x, y = x0, y0
     traj_list = [[x0, y0]]
@@ -46,21 +49,21 @@ def orbit(
     for iter in range(Tmax):
         if map_type == "Simple":
             x, y = y, -x + force(y, k_list, xi_list, d)
-        elif map_type == "Periodic":
-            x, y = y, -x + force_periodic(y, k_list, xi_list, d)
+        elif map_type == "Thorus":
+            x, y = y, -x + force_thorus(y , k_list, xi_list, d, L)
 
         traj_list += [[x, y]]
     traj_data = np.vstack(traj_list)
     return traj_data
 
-def plot_orbits(k_list, xi_list, d, Tmax=1000, map_type="Simple"):
+def plot_orbits(k_list, xi_list, d, Tmax=1000, map_type="Simple", L=1):
     x0_list = np.linspace(0, 5, 10)
     max_x0 = max(x0_list)
 
     for i, x0 in enumerate(x0_list):
 
         y0 = x0*1.0
-        tmp = orbit(x0, y0, k_list, xi_list, d, Tmax=Tmax)
+        tmp = orbit(x0, y0, k_list, xi_list, d, Tmax=Tmax, map_type=map_type, L=L)
         if i == 0:
             traj_data = tmp
         else:
@@ -81,6 +84,7 @@ def plot_orbits(k_list, xi_list, d, Tmax=1000, map_type="Simple"):
 
 st.title('Integrable symplectic mappings of the plane')
 
+L = None
 with st.sidebar:
     st.subheader('Map parameters')
 
@@ -103,10 +107,15 @@ with st.sidebar:
 
     Tmax = st.number_input("Number of map iterations", value=1000, min_value=1, step=100)
 
+    if map_type == "Thorus":
+        L = st.slider('Period, L (thorus map)', min_value=1, max_value=10, value=2, step=1)
+
+    st.divider()
+    md = st.markdown(''':gray[@ Created by Yaroslav Kharkov, Tymofey Zolkin, Sergey Nagaitsev (2023)]''')
 st.subheader('Mapping')
 
 print("Plot orbits")
-fig_map = plot_orbits(k_list, xi_list, d=d, Tmax=Tmax, map_type=map_type)
+fig_map = plot_orbits(k_list, xi_list, d=d, Tmax=Tmax, map_type=map_type, L=L)
 st.plotly_chart(fig_map)
 
 st.subheader('Force function')
@@ -114,14 +123,14 @@ st.subheader('Force function')
 x = np.linspace(min(xi_list)-5, max(xi_list)+5, 1000)
 f = []
 
-if map_type == "Simple":
-    f_func = force
-elif map_type == "Periodic":
-    f_func = force_periodic
 
 print(k_list, xi_list)
 for xi in x:
-    f.append(f_func(xi, k_list, xi_list, d))
+    if map_type == "Simple":
+        f.append(force(xi, k_list, xi_list, d))
+    elif map_type == "Thorus":
+        f.append(force_thorus(xi, k_list, xi_list, d, L=L))
+
 df = pd.DataFrame({'x': x, 'f': f})
 fig_f = px.scatter(df, x='x', y='f')
 fig_f.update_layout(
