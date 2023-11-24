@@ -50,6 +50,7 @@ def orbit(
         if map_type == "Simple":
             x, y = y, -x + force(y, k_list, xi_list, d)
         elif map_type == "Thorus":
+            L = xi_list[-1]
             x, y = y, -x + force_thorus(y , k_list, xi_list, d, L)
 
         traj_list += [[x, y]]
@@ -63,7 +64,7 @@ def plot_orbits(k_list, xi_list, d, Tmax=1000, map_type="Simple", L=1):
     for i, x0 in enumerate(x0_list):
 
         y0 = x0*1.0
-        tmp = orbit(x0, y0, k_list, xi_list, d, Tmax=Tmax, map_type=map_type, L=L)
+        tmp = orbit(x0, y0, k_list, xi_list, d, Tmax=Tmax, map_type=map_type)
         if i == 0:
             traj_data = tmp
         else:
@@ -91,7 +92,7 @@ with st.sidebar:
     map_type = st.radio(
         "Select map type 👉",
         key="Simple",
-        options=["Simple", "Thorus"],
+        options=["Simple", "Periodic", "Thorus"],
     )
 
     st.divider()
@@ -108,12 +109,15 @@ with st.sidebar:
     #         l_list.append(st.slider(f'Segment length, l{p}', min_value=1, max_value=3, value=1))
 
     d = st.slider('Shift parameter, d', min_value=-10, max_value=10, value=0)
-    xi_list = np.arange(len(k_list)-1)
+    if (map_type == "Simple") or (map_type == "Thorus"):
+        xi_list = np.arange(len(k_list)-1)
+    else:
+        xi_list = np.arange(1, len(k_list)+1)
 
     Tmax = st.number_input("Number of map iterations", value=1000, min_value=1, step=100)
 
-    if map_type == "Thorus":
-        L = st.slider('Period, L (thorus map)', min_value=1, max_value=10, value=2, step=1)
+    # if map_type == "Thorus":
+    #     L = st.slider('Period, L (thorus map)', min_value=1, max_value=10, value=2, step=1)
 
     st.divider()
     md = st.markdown(''':gray[@ Created by Yaroslav Kharkov, Tymofey Zolkin, Sergey Nagaitsev (2023)]''')
@@ -124,7 +128,7 @@ with tab1:
     st.subheader('Mapping')
 
     print("Plot orbits")
-    fig_map = plot_orbits(k_list, xi_list, d=d, Tmax=Tmax, map_type=map_type, L=L)
+    fig_map = plot_orbits(k_list, xi_list, d=d, Tmax=Tmax, map_type=map_type)
     st.plotly_chart(fig_map)
 
     st.subheader('Force function')
@@ -138,7 +142,9 @@ with tab1:
         if map_type == "Simple":
             f.append(force(xi, k_list, xi_list, d))
         elif map_type == "Thorus":
-            f.append(force_thorus(xi, k_list, xi_list, d, L=L))
+            f.append(force_thorus(xi, k_list, xi_list, d, L=xi_list[-1]))
+        elif map_type == "Periodic":
+            f.append(force_periodic(xi, k_list, xi_list, d))
 
     df = pd.DataFrame({'x': x, 'f': f})
     fig_f = px.scatter(df, x='x', y='f')
