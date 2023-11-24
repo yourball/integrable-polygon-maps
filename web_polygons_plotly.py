@@ -91,7 +91,7 @@ with st.sidebar:
     map_type = st.radio(
         "Select map type 👉",
         key="Simple",
-        options=["Simple", "Periodic", "Thorus"],
+        options=["Simple", "Thorus"],
     )
 
     st.divider()
@@ -112,29 +112,39 @@ with st.sidebar:
 
     st.divider()
     md = st.markdown(''':gray[@ Created by Yaroslav Kharkov, Tymofey Zolkin, Sergey Nagaitsev (2023)]''')
-st.subheader('Mapping')
 
-print("Plot orbits")
-fig_map = plot_orbits(k_list, xi_list, d=d, Tmax=Tmax, map_type=map_type, L=L)
-st.plotly_chart(fig_map)
+tab1, tab2 = st.tabs(["Map visualization", "Definitions"])
 
-st.subheader('Force function')
-# plot force function
-x = np.linspace(min(xi_list)-5, max(xi_list)+5, 1000)
-f = []
+with tab1:
+    st.subheader('Mapping')
+
+    print("Plot orbits")
+    fig_map = plot_orbits(k_list, xi_list, d=d, Tmax=Tmax, map_type=map_type, L=L)
+    st.plotly_chart(fig_map)
+
+    st.subheader('Force function')
+    # plot force function
+    x = np.linspace(min(xi_list)-5, max(xi_list)+5, 1000)
+    f = []
 
 
-print(k_list, xi_list)
-for xi in x:
-    if map_type == "Simple":
-        f.append(force(xi, k_list, xi_list, d))
-    elif map_type == "Thorus":
-        f.append(force_thorus(xi, k_list, xi_list, d, L=L))
+    print(k_list, xi_list)
+    for xi in x:
+        if map_type == "Simple":
+            f.append(force(xi, k_list, xi_list, d))
+        elif map_type == "Thorus":
+            f.append(force_thorus(xi, k_list, xi_list, d, L=L))
 
-df = pd.DataFrame({'x': x, 'f': f})
-fig_f = px.scatter(df, x='x', y='f')
-fig_f.update_layout(
-    width=600,
-    height=600,
-  )
-st.plotly_chart(fig_f)
+    df = pd.DataFrame({'x': x, 'f': f})
+    fig_f = px.scatter(df, x='x', y='f')
+    fig_f.update_layout(
+        width=600,
+        height=600,
+      )
+    st.plotly_chart(fig_f)
+with tab2:
+    st.text("Symplectic (Hamiltonian) map in McMillan-Turaev form:")
+    st.latex(r'''
+        q'= p,\quad
+        p'=-q+f(p)
+        ''')
