@@ -96,11 +96,16 @@ with st.sidebar:
 
     st.divider()
     k_list = []
+    l_list = []
     num_pieces = st.number_input('Number of piecewise regions',
                                  min_value=2, max_value=10, value=3, step=1)
-    st.text(r'Slopes of the piesewise function')
-    for p in range(num_pieces):
-        k_list.append(st.slider(f'k{p}', min_value=-3, max_value=3, value=0))
+
+    with st.expander("Slopes of the piesewise function"):
+        for p in range(num_pieces):
+            k_list.append(st.slider(f'Slope, k{p}', min_value=-3, max_value=3, value=0))
+    # with st.expander("Segment lengths of the piesewise function"):
+    #     for p in range(num_pieces):
+    #         l_list.append(st.slider(f'Segment length, l{p}', min_value=1, max_value=3, value=1))
 
     d = st.slider('Shift parameter, d', min_value=-10, max_value=10, value=0)
     xi_list = np.arange(len(k_list)-1)
