@@ -92,7 +92,7 @@ def plot_orbits(k_list, xi_list, d, Tmax=1000, map_type="Simple", L=1):
       )
     return fig_map
 
-st.title('Integrable symplectic mappings of the plane with polygon invariants [ZKN]')
+st.title('Integrable symplectic mappings of the plane with polygon invariants')
 
 
 
