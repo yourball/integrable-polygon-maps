@@ -79,7 +79,6 @@ def plot_orbits(k_list, xi_list, d, Tmax=1000, map_type="Simple", L=1):
                       })
 
     fig_map = px.scatter(df, x='q', y='p',
-                        #color='c'
                         )
     fig_map.update_layout(
         width=600,
@@ -89,7 +88,6 @@ def plot_orbits(k_list, xi_list, d, Tmax=1000, map_type="Simple", L=1):
 
 st.title('Integrable symplectic mappings of the plane')
 
-L = None
 with st.sidebar:
     st.subheader('Map parameters')
 
@@ -105,14 +103,16 @@ with st.sidebar:
     num_pieces = st.number_input('Number of piecewise regions',
                                  min_value=2, max_value=10, value=3, step=1)
 
+    k_init = [1., 2., 0.] * num_pieces
+    l_init = [2., 1., 1.] * num_pieces
+
     with st.expander("Slopes of the piesewise function"):
         for p in range(num_pieces):
-            k_list.append(st.slider(f'Slope, k{p}', min_value=-3., max_value=3., value=0., step=0.5))
+            k_list.append(st.slider(f'Slope, k{p}', min_value=-3., max_value=3., value=k_init[p], step=0.5))
     with st.expander("Segment lengths of the piesewise function"):
         num_lengths = num_pieces-2 if map_type == "Simple" else num_pieces
-
         for p in range(num_lengths):
-            l_list.append(st.slider(f'Segment length, l{p}', min_value=1., max_value=3., value=1., step=0.5))
+            l_list.append(st.slider(f'Segment length, l{p}', min_value=1., max_value=3., value=l_init[p], step=0.5))
 
     d = st.slider('Shift parameter, d', min_value=-10., max_value=10., value=0., step=0.5)
 
@@ -139,10 +139,10 @@ with tab1:
     if (map_type == "Periodic") or (map_type=="Thorus"):
         k_list = [k_list[0]] + k_list + [k_list[-1]]
 
-    print("k_list", k_list)
-    print("l_list", l_list)
-    print("xi_list", xi_list)
-    print(map_type)
+    # print("k_list", k_list)
+    # print("l_list", l_list)
+    # print("xi_list", xi_list)
+    # print(map_type)
 
     fig_map = plot_orbits(k_list, xi_list, d=d, Tmax=Tmax, map_type=map_type)
     st.plotly_chart(fig_map)
@@ -168,7 +168,6 @@ with tab1:
         height=600,
       )
     st.plotly_chart(fig_f)
-    plt.legend()
 with tab2:
     st.markdown("Symplectic (Hamiltonian) map in McMillan-Turaev form:")
     st.latex(r'''
@@ -182,6 +181,7 @@ with tab2:
     st.markdown("Force function on a thorus is defined as:")
     st.latex(r''' f_\mathrm{tor}(q) =
 f_\mathrm{p.l.}(q\,\,\mathrm{mod}\,\, L)\quad\mathrm{mod}\,\, L. ''')
+
 with tab3:
 
     image1 = Image.open('Map1516.png')
