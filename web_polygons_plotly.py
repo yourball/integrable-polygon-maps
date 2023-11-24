@@ -8,6 +8,12 @@ import time
 import matplotlib.pyplot as plt
 from PIL import Image
 
+st.set_page_config(
+    page_title="Integrable ZKN maps",
+    page_icon="🧊",
+    initial_sidebar_state="expanded",
+)
+
 def force(x, k_list, xi_list, d):
     # assert len(k_list) == len(xi_list) + 1
     # precompute parameters of the force function
@@ -86,7 +92,9 @@ def plot_orbits(k_list, xi_list, d, Tmax=1000, map_type="Simple", L=1):
       )
     return fig_map
 
-st.title('Integrable symplectic mappings of the plane with polygon invariants')
+st.title('Integrable symplectic mappings of the plane with polygon invariants [ZKN]')
+
+
 
 with st.sidebar:
     st.subheader('Map parameters')
